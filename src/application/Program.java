@@ -4,7 +4,7 @@ import model.entities.Department;
 
 public class Program {
 	public static void main(String[] args) {
-		Department dtp = new Department(1, "Books");
-		System.out.println(dtp);
+		Department obj = new Department(1, "Books");
+		System.out.println(obj);
 	}
 }
