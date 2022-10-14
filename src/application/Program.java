@@ -16,9 +16,19 @@ public class Program {
 		
 		System.out.println(seller);
 		
+		System.out.println("============================================");
+
+		
 		Department department = new Department(2, null);
 		
 		List<Seller> list = sd.findByDepartment(department);
+		
+		for(Seller obj : list) {
+			System.out.println(obj);
+		}
+		
+		System.out.println("============================================");
+		list = sd.findAll();
 		
 		for(Seller obj : list) {
 			System.out.println(obj);
