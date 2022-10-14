@@ -8,16 +8,17 @@ import model.entities.Department;
 
 public class Program2 {
 	public static void main(String[] args) {
-		
+
 		DepartmentDAO depart = DaoFactory.createDepartmentDao();
-		
+
 		List<Department> list = depart.findAll();
-		for(Department d : list) {
+		for (Department d : list) {
 			System.out.println(d);
-		}		
-		
+		}
+
 		System.out.println("========================================================");
-		
-		
+
+		Department department = depart.findById(6);
+		System.out.println(department);
 	}
 }
