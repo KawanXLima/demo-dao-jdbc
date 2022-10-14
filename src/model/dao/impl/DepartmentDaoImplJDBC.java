@@ -4,16 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import db.DB;
 import db.DbException;
 import model.dao.DepartmentDAO;
 import model.entities.Department;
-import model.entities.Seller;
 
 public class DepartmentDaoImplJDBC implements DepartmentDAO {
 
@@ -25,20 +22,82 @@ public class DepartmentDaoImplJDBC implements DepartmentDAO {
 
 	@Override
 	public void insert(Department obj) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		ResultSet rs = null;
+
+		try {
+			st = conn.prepareStatement("insert into department " + "(Name) "
+					+ "values " + "(?)", Statement.RETURN_GENERATED_KEYS);
+
+			st.setString(1, obj.getName());
+
+			int rowsAffected = st.executeUpdate();
+
+			if (rowsAffected > 0) {
+				rs = st.getGeneratedKeys();
+				if (rs.next()) {
+					int id = rs.getInt(1);
+					obj.setId(id);
+				}
+			} else {
+				throw new DbException("Unexpected error: No rows affected");
+			}
+		}
+
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
 
 	}
 
 	@Override
 	public void update(Department obj) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+
+		try {
+			st = conn.prepareStatement("update department set " + "Name = ? " + "where Id = ?");
+
+			st.setString(1, obj.getName());
+			st.setInt(2, obj.getId());
+
+			st.executeUpdate();
+		}
+
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+
+		finally {
+			DB.closeStatement(st);
+		}
 
 	}
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
 
+		try {
+
+			st = conn.prepareStatement("delete from department where Id = ?");
+
+			st.setInt(1, id);
+			st.executeUpdate();
+
+		}
+
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+
+		finally {
+			DB.closeStatement(st);
+		}
 	}
 
 	@Override
@@ -48,9 +107,8 @@ public class DepartmentDaoImplJDBC implements DepartmentDAO {
 		ResultSet rs = null;
 		try {
 
-			st = conn.prepareStatement("SELECT * " + "FROM department "
-					+ "WHERE department.Id = ?");
-			
+			st = conn.prepareStatement("SELECT * " + "FROM department " + "WHERE department.Id = ?");
+
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			if (rs.next()) {
@@ -58,7 +116,7 @@ public class DepartmentDaoImplJDBC implements DepartmentDAO {
 				Department dep = instantiateDepartment(rs);
 				return dep;
 			}
-			
+
 			return null;
 
 		}
